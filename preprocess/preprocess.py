@@ -8,7 +8,8 @@ Created on Mon Aug  8 16:00:38 2022
 This is the file for the image processing.
 """
 
-
+import os
+from tqdm import tqdm
 import math
 import cv2
 import numpy as np
@@ -327,7 +328,7 @@ def reduced_face_mesh(image):
     """
     
     if(type(image) == type(None)):
-        #prppprpsdfint("Cannot face mesh. image is None.")
+        #print("Cannot face mesh. image is None.")
         return
     
     # for face mesh style
@@ -366,6 +367,47 @@ def reduced_face_mesh(image):
                 x = int(face_landmarks.landmark[landmarks[i][0]].x * width)
                 y = int(face_landmarks.landmark[landmarks[i][0]].y * height)
                 
-                cv2.line(annotated_image, (x, y), (x, y), (255, 0, 0), 2)
+                cv2.line(annotated_image, (x, y), (x, y), (0, 0, 255), 2)
             
     return annotated_image
+
+if __name__ == "__main__":
+    os.chdir("../../data/FERPlus/images")
+    #classes = ["neutral", "happy", "fear", "disgust", "angry", "sad", "surprise"]
+    no_landmark_dict = {}
+
+    for mode in ["FER2013Train", "FER2013Test", "FER2013Valid"]:
+        print("###", mode, "###")
+        no_landmark = {}
+        
+        os.chdir("./" + mode)
+        
+    #     for label in classes:
+    #         print("##", label, "##")
+    #         os.chdir("./"+label)
+        files = sorted(os.listdir(os.getcwd()))
+        print("Total count of images in {}: {}".format(mode, len(files)))
+
+        file_list = []
+        none_file_count = 0
+
+        for file in tqdm(files):
+            result = image_preprocessing(file)
+            
+            if file == 'label.csv':
+                continue
+                
+            if(type(result) == type(None)):
+                print(mode,"-", file)
+                file_list.append(file)
+                none_file_count += 1
+                
+            else:
+                cv2.imwrite("../../../refinedFERPlus/"+mode+"/"+file, result)
+                
+        print("Total count of non images(cannot preprossed):", none_file_count)
+        no_landmark[mode] = file_list
+
+        os.chdir("..")
+
+    os.chdir("..")
