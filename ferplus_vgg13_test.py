@@ -5,7 +5,7 @@ import cv2
 
 import torch
 import torch.optim as optim
-import torch.utils.data as data
+import torch.utils.data as datay
 from torch.utils.data import Dataset, DataLoader
 from torchvision.models import vgg13
 import torch.nn as nn
@@ -84,8 +84,9 @@ if not webcam.isOpened():
 while webcam.isOpened():
     status, frame = webcam.read()
     
-    preprocess_frame = preprocess.image_preprocessing(frame) # input for cnn
-    
+    # preprocess_frame = preprocess.image_preprocessing(frame) # input for cnn
+    preprocess_frame = frame
+
     if preprocess_frame is None:
         result = 'Not Defined'
         cv2.putText(frame, result, (50, 100), cv2.FONT_ITALIC, 2, (0,0,255), 2)
